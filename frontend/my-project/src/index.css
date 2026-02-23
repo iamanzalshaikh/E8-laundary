@@ -1,0 +1,207 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Poppins:wght@600;700;800&family=Space+Grotesk:wght@500;700&display=swap');
+@import "tailwindcss";
+
+@theme {
+  --color-primary: var(--primary);
+  --color-secondary: var(--secondary);
+  --color-accent: var(--accent);
+  --color-dark: var(--dark);
+  --color-card: var(--card-bg);
+  --color-border: var(--border-color);
+  --color-text: var(--text-main);
+  --color-muted: var(--text-muted);
+
+  --font-inter: "Inter", sans-serif;
+  --font-poppins: "Poppins", sans-serif;
+  --font-space: "Space Grotesk", sans-serif;
+  
+  --shadow-premium: 0 20px 50px -12px rgba(0, 0, 0, 0.5);
+  --shadow-glow-secondary: 0 0 40px -10px rgba(45, 225, 252, 0.3);
+  --shadow-glow-accent: 0 0 40px -10px rgba(255, 107, 107, 0.3);
+}
+
+:root {
+  --primary: #0A2463;
+  --secondary: #2DE1FC;
+  --accent: #FF6B6B;
+  --dark: #050505;
+  --neutral: #050505;
+  --card-bg: rgba(15, 15, 15, 0.7);
+  --border-color: rgba(255, 255, 255, 0.08);
+  --text-main: #ffffff;
+  --text-muted: rgba(255, 255, 255, 0.5);
+
+  background-color: var(--dark);
+  color: var(--text-main);
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+}
+
+:root.light {
+  --primary: #0A2463;
+  --secondary: #00B4D8;
+  --accent: #E11D48;
+  --dark: #F8FAFC;
+  --neutral: #FFFFFF;
+  --card-bg: rgba(255, 255, 255, 0.9);
+  --border-color: rgba(15, 23, 42, 0.1);
+  --text-main: #0F172A;
+  --text-muted: #64748B;
+}
+
+body {
+  margin: 0;
+  overflow-x: hidden;
+  background-color: var(--dark);
+  font-family: var(--font-inter);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.noise-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  pointer-events: none;
+  opacity: 0.03;
+  background-image: url("https://grainy-gradients.vercel.app/noise.svg");
+  filter: contrast(150%) brightness(1000%);
+}
+
+@layer utilities {
+  .glass-card {
+    @apply backdrop-blur-xl bg-white/[0.02] border border-white/[0.05] shadow-[0_20px_50px_-12px_rgba(0,0,0,0.5)];
+  }
+
+  :root.light .glass-card {
+    @apply bg-white/70 border-white/50 shadow-[0_8px_30px_rgb(0,0,0,0.04),0_20px_40px_rgba(15,23,42,0.08)];
+  }
+  
+  .glow-teal {
+    @apply shadow-[0_0_50px_-12px_rgba(45,225,252,0.3)];
+  }
+
+  :root.light .glow-teal {
+    @apply shadow-[0_20px_40px_-10px_rgba(0,180,216,0.15)];
+  }
+  
+  .glow-coral {
+    @apply shadow-[0_0_50px_-12px_rgba(255,107,107,0.3)];
+  }
+
+  :root.light .glow-coral {
+    @apply shadow-[0_20px_40px_-10px_rgba(225,29,72,0.15)];
+  }
+
+  .text-gradient {
+    @apply bg-clip-text text-transparent bg-gradient-to-r from-primary via-secondary to-accent;
+  }
+
+  :root:not(.light) .text-gradient {
+    @apply from-white via-white to-white/30;
+  }
+
+  .btn-premium {
+    @apply relative inline-flex items-center justify-center px-10 py-5 rounded-full font-black text-sm uppercase tracking-[0.2em] text-white transition-all overflow-hidden isolation-auto;
+    background: linear-gradient(135deg, #FF6B6B 0%, #2DE1FC 100%);
+    box-shadow: 0 10px 30px -10px rgba(255, 107, 107, 0.4);
+  }
+
+  .btn-premium:hover {
+    @apply -translate-y-1 shadow-2xl shadow-accent/40;
+    filter: brightness(1.1);
+  }
+
+  .btn-premium:active {
+    @apply scale-95;
+  }
+  
+  .marquee {
+    display: flex;
+    overflow: hidden;
+    user-select: none;
+    gap: 2rem;
+  }
+
+  .marquee-content {
+    flex-shrink: 0;
+    display: flex;
+    justify-content: space-around;
+    min-width: 100%;
+    gap: 2rem;
+    animation: scroll 30s linear infinite;
+  }
+
+  .marquee:hover .marquee-content {
+    animation-play-state: paused;
+  }
+}
+
+@keyframes scroll {
+  from { transform: translateX(0); }
+  to { transform: translateX(calc(-100% - 2rem)); }
+}
+
+@keyframes float {
+  0% { transform: translateY(0px); }
+  50% { transform: translateY(-20px); }
+  100% { transform: translateY(0px); }
+}
+
+@keyframes grid-move {
+  0% { background-position: 0 0; }
+  100% { background-position: 40px 40px; }
+}
+
+.animate-float {
+  animation: float 6s ease-in-out infinite;
+}
+
+.bg-grid {
+  background-image: 
+    linear-gradient(to right, rgba(255,255,255,0.03) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(255,255,255,0.03) 1px, transparent 1px);
+  background-size: 60px 60px;
+  mask-image: radial-gradient(circle at center, black, transparent 80%);
+}
+
+.mesh-gradient {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: -1;
+  background: 
+    radial-gradient(at 0% 0%, hsla(220,100%,10%,1) 0, transparent 50%), 
+    radial-gradient(at 50% 0%, hsla(190,100%,15%,1) 0, transparent 50%), 
+    radial-gradient(at 100% 0%, hsla(350,100%,10%,1) 0, transparent 50%);
+  filter: blur(80px);
+  opacity: 0.6;
+}
+
+:root.light .mesh-gradient {
+  background: 
+    radial-gradient(at 0% 0%, hsla(220,100%,80%,0.8) 0, transparent 50%), 
+    radial-gradient(at 50% 0%, hsla(190,100%,85%,0.8) 0, transparent 50%), 
+    radial-gradient(at 100% 0%, hsla(350,100%,80%,0.8) 0, transparent 50%);
+  opacity: 0.6;
+}
+
+::-webkit-scrollbar {
+  width: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(0,0,0,0.1);
+  border-radius: 10px;
+}
+
+:root:not(.light) ::-webkit-scrollbar-thumb {
+  background: rgba(255,255,255,0.1);
+}
+
+

@@ -1,0 +1,6 @@
+/* Global resets and app-level containers are handled in index.css */
+#root {
+  width: 100%;
+  margin: 0;
+  padding: 0;
+}
