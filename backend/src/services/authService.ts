@@ -1,7 +1,33 @@
 import User from "../models/User.js";
-import redis from "../config/redis.js";
 import { sendOTPEmail } from "./emailService.js";
 import logger from "../config/logger.js";
+
+/**
+ * Simple in-memory store for OTP + verification flags.
+ * This avoids any Redis dependency for environments like Render.
+ */
+const otpStore = new Map<string, { value: string; expiresAt: number }>();
+
+const setWithTTL = (key: string, value: string, ttlSeconds: number) => {
+  otpStore.set(key, {
+    value,
+    expiresAt: Date.now() + ttlSeconds * 1000,
+  });
+};
+
+const getIfValid = (key: string): string | null => {
+  const entry = otpStore.get(key);
+  if (!entry) return null;
+  if (Date.now() > entry.expiresAt) {
+    otpStore.delete(key);
+    return null;
+  }
+  return entry.value;
+};
+
+const delKey = (key: string) => {
+  otpStore.delete(key);
+};
 
 /**
  * Generate a 6-digit OTP
@@ -22,12 +48,12 @@ export const sendOTPService = async (email: string): Promise<void> => {
   const otp = generateOTP();
   const key = `otp:${email}`;
 
-  // Store OTP in Redis with 10-minute expiry
-  await redis.set(key, otp, "EX", 600);
+  // Store OTP in-memory with 10-minute expiry
+  setWithTTL(key, otp, 600);
 
   // Send OTP Email
   await sendOTPEmail(email, otp);
-  
+
   logger.info(`OTP sent to ${email}`);
 };
 
@@ -36,7 +62,7 @@ export const sendOTPService = async (email: string): Promise<void> => {
  */
 export const verifyOTPService = async (email: string, otp: string): Promise<void> => {
   const key = `otp:${email}`;
-  const storedOTP = await redis.get(key);
+  const storedOTP = getIfValid(key);
 
   if (!storedOTP) {
     throw new Error("OTP expired or not found");
@@ -47,12 +73,12 @@ export const verifyOTPService = async (email: string, otp: string): Promise<void
   }
 
   // OTP is valid, remove it
-  await redis.del(key);
+  delKey(key);
 
   // Mark as verified for password reset (valid for 15 minutes)
   const verifyKey = `verified:${email}`;
-  await redis.set(verifyKey, "true", "EX", 900);
-  
+  setWithTTL(verifyKey, "true", 900);
+
   logger.info(`OTP verified for ${email}`);
 };
 
@@ -61,7 +87,7 @@ export const verifyOTPService = async (email: string, otp: string): Promise<void
  */
 export const resetPasswordService = async (email: string, password: string): Promise<void> => {
   const verifyKey = `verified:${email}`;
-  const isVerified = await redis.get(verifyKey);
+  const isVerified = getIfValid(verifyKey);
 
   if (!isVerified) {
     throw new Error("OTP verification required");
@@ -77,7 +103,7 @@ export const resetPasswordService = async (email: string, password: string): Pro
   await user.save();
 
   // Clear verification status
-  await redis.del(verifyKey);
-  
+  delKey(verifyKey);
+
   logger.info(`Password reset successful for ${email}`);
 };
