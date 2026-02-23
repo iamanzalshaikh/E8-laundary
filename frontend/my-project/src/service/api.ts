@@ -1,7 +1,7 @@
 import axios from "axios";
 import { useAuthStore } from "../store/authStore";
 
-export const API_URL = "http://localhost:5000/api/v1";
+export const API_URL = "https://e8-laundary-backend.onrender.com";
 
 export const api = axios.create({
   baseURL: API_URL,
