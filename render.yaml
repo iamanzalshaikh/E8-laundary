@@ -1,0 +1,20 @@
+# Render.com Blueprint – backend service
+# The app runs the compiled TypeScript output: backend/dist/server.js
+#
+# Required env vars in Render Dashboard:
+#   MONGO_URI     – MongoDB connection string (e.g. MongoDB Atlas)
+#   PORT          – Set by Render automatically; keep default if not overriding
+#   NODE_ENV      – production
+#   FRONTEND_URL  – Your frontend URL (e.g. https://your-app.onrender.com)
+#   MASTER_URL    – Same or your main app URL
+#   JWT_*_SECRET  – Your JWT secrets (see backend/.env for names)
+# Optional: REDIS_URL – Redis URL (e.g. from Render Redis add-on or Upstash).
+#   If not set in production, app uses in-memory store (OTP works per instance only).
+
+services:
+  - type: web
+    name: e8-laundromat-backend
+    runtime: node
+    rootDir: backend
+    buildCommand: npm install && npm run build
+    startCommand: npm start

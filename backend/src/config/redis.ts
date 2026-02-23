@@ -44,13 +44,15 @@ const isRedisConfigured = () => {
 };
 
 let redis: RedisLike;
+let redisClient: Redis | null = null;
 
 if (isRedisConfigured()) {
-  redis = new Redis(config.REDIS_URL!);
-  redis.on("connect", () => {
+  redisClient = new Redis(config.REDIS_URL!);
+  redis = redisClient;
+  redisClient.on("connect", () => {
     logger.info("Connected to Redis successfully");
   });
-  redis.on("error", (err) => {
+  redisClient.on("error", (err: Error) => {
     logger.error("Redis Connection Error:", err);
   });
 } else {
