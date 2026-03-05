@@ -1,7 +1,9 @@
 import axios from "axios";
 import { useAuthStore } from "../store/authStore";
 
-export const API_URL = "https://e8-laundary-backend.onrender.com/api/v1";
+// Must include /api/v1 — backend mounts all routes under that path
+export const API_URL =
+  import.meta.env.VITE_API_URL ?? "http://localhost:5000/api/v1";
 
 export const api = axios.create({
   baseURL: API_URL,
