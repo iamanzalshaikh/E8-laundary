@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom'
 import { useState, useEffect } from 'react'
-import { ChevronDown, ChevronRight, Check, Star, Info, Target, Zap, Shield, Bot, Rocket, Play, ExternalLink, Menu, X } from 'lucide-react'
+import { ChevronDown, Check, Star, Info, Target, Zap, Shield, Bot, Rocket, Play, ExternalLink, Menu, X } from 'lucide-react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { cn } from '../lib/utils'
 
